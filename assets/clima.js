@@ -1,4 +1,4 @@
-const apiKey = process.env.WEATHER_API_KEY;
+const apiKey = process.env.API_KEY;
 export default class WeatherApp {
     constructor() {
         this.longitude = null;
