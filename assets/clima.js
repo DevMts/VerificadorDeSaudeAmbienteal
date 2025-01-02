@@ -1,4 +1,5 @@
 const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+
 export default class WeatherApp {
     constructor() {
         this.longitude = null;
@@ -13,12 +14,15 @@ export default class WeatherApp {
             };
             navigator.geolocation.getCurrentPosition(success);
         } catch (error) {
-            console.error("Erro ao obter localização"); // Log de erro (mantido)
+            console.error("Erro ao obter localização");
         }
     }
 
     async getQuality() {
-        console.log(apiKey);
+        if (!apiKey) {
+            console.error("API Key não definida");
+            return;  // Verifica se a chave está definida
+        }
         try {
             const response = await fetch(`http://api.airvisual.com/v2/nearest_city?lat=${this.latitude}&lon=${this.longitude}&key=${apiKey}`);
             if (!response.ok) {
@@ -32,11 +36,11 @@ export default class WeatherApp {
                 "ws": data.data.current.weather.ws,
                 "hu": data.data.current.weather.hu,
                 "ic": data.data.current.weather.ic
-            }
+            };
 
             return Dados;
         } catch (error) {
-            console.error('Erro ao buscar qualidade do ar:', error); // Log de erro (mantido)
+            console.error('Erro ao buscar qualidade do ar:', error);
         }
     }
 }
