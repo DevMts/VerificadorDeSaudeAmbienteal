@@ -1,4 +1,3 @@
-const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
 export default class WeatherApp {
     constructor() {
@@ -19,6 +18,9 @@ export default class WeatherApp {
     }
 
     async getQuality() {
+        const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+        console.log(apiKey);
+        
         if (!apiKey) {
             console.error("API Key não definida");
             return;  // Verifica se a chave está definida
