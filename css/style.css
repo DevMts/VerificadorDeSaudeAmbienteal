@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1e1d1d;
+    color: #333;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #252525;
+    color: white;
+    padding: 10px 20px;
+}
+
+.navbar .logo img {
+    height: 40px;
+}
+
+.verificador-saude {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    gap: 20px;
+    background-color: #0095ff;
+    border-radius: 10px;
+    margin: 20px;
+}
+
+article {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: center;
+}
+
+.barra-aqi {
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.nivel-aqi {
+    height: 100%;
+    width: 75%; /* Exemplo */
+    background: #f44336; /* Exemplo */
+    transition: width 0.3s ease-in-out;
+}
+
+.seletor-dicas {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+@media (max-width: 768px) {
+    .verificador-saude {
+        flex-direction: column;
+    }
+    svg{
+        width: 100px;
+    }
+    h1{
+        font-size: 1rem;
+        margin-left: 2rem;
+    }
+
+}
