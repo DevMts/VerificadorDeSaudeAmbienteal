@@ -18,6 +18,7 @@ export default class WeatherApp {
     }
 
     async getQuality() {
+        console.log(apiKey);
         try {
             const response = await fetch(`http://api.airvisual.com/v2/nearest_city?lat=${this.latitude}&lon=${this.longitude}&key=${apiKey}`);
             if (!response.ok) {
