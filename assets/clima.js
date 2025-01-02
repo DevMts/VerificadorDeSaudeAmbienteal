@@ -18,7 +18,7 @@ export default class WeatherApp {
     }
 
     async getQuality() {
-        const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+        const apiKey = process.env.API_KEY;
         console.log(apiKey);
         
         if (!apiKey) {
