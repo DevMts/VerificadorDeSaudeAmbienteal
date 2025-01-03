@@ -195,7 +195,7 @@ class WeatherApp {
 
     async getQuality() {
         try {
-            const response = await fetch(`http://api.airvisual.com/v2/nearest_city?lat=${this.latitude}&lon=${this.longitude}&key=885d48e7-09ae-4583-aebf-759f3b8acae4`);
+            const response = await fetch(`https://api.airvisual.com/v2/nearest_city?lat=${this.latitude}&lon=${this.longitude}&key=885d48e7-09ae-4583-aebf-759f3b8acae4`);
             if (!response.ok) {
                 throw new Error('Erro na requisição: ' + response.statusText);
             }
