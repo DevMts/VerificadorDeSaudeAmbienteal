@@ -1,1 +1,19 @@
-.env
+# Node modules
+node_modules/
+
+
+# Configurações do Babel e Webpack
+.babelrc
+babel.config.json
+webpack.config.js
+
+# Arquivos intermediários ou específicos do editor/OS
+*.log
+*.lock
+.DS_Store
+*.env
+
+# Outros arquivos que você não quer incluir
+package-lock.json
+package.json
+assets/
