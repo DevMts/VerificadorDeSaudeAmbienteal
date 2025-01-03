@@ -17,10 +17,16 @@ export default class WeatherApp {
     }
 
     async getQuality() {
-        console.log("API Key:", process.env.NEXT_PUBLIC_WEATHER_API_KEY);
-        const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
-        console.log(apiKey);
+        console.log("teste1");
         
+        try {
+            console.log("API Key:", process.env.NEXT_PUBLIC_WEATHER_API_KEY);
+            const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
+            console.log(apiKey);    
+        } catch (error) {
+            console.log("deu merda");
+            
+        }
         if (!apiKey) {
             console.error("API Key não definida");
             return;  // Verifica se a chave está definida
