@@ -174,39 +174,42 @@ class Render {
         iconContainer.innerHTML = iconHTML;
     }
 }
-
 class WeatherApp {
     constructor() {
         this.longitude = null;
         this.latitude = null;
     }
 
+    static API_KEY = "d649f1da49ca79fd528f9d8d68e51df9";
+
     getLocalization() {
-        try {
-            const success = (position) => {
-                this.longitude = position.coords.longitude;
-                this.latitude = position.coords.latitude;
-            };
-            navigator.geolocation.getCurrentPosition(success);
-        } catch (error) {
-            console.error("Erro ao obter localização"); // Log de erro (mantido)
-        }
+        return new Promise((resolve, reject) => {
+            try {
+                const success = (position) => {
+                    this.longitude = position.coords.longitude;
+                    this.latitude = position.coords.latitude;
+                    resolve();  // Resolve a Promise quando as coordenadas forem obtidas
+                };
+                navigator.geolocation.getCurrentPosition(success, reject); // Caso haja erro na geolocalização
+            } catch (error) {
+                reject("Erro ao obter localização"); // Log de erro (mantido)
+            }
+        });
     }
 
     async getQuality() {
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${this.latitude}&lon=${this.longitude}&appid=${WeatherApp.API_KEY}&units=metric`;
+        const airPollutionUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${this.latitude}&lon=${this.longitude}&appid=${WeatherApp.API_KEY}`;
         try {
-            const response = await fetch(`https://api.airvisual.com/v2/nearest_city?lat=${this.latitude}&lon=${this.longitude}&key=885d48e7-09ae-4583-aebf-759f3b8acae4`);
-            if (!response.ok) {
-                throw new Error('Erro na requisição: ' + response.statusText);
-            }
-            const data = await response.json();
+            const weatherData = await this.fetchData(weatherUrl);
+            const airPollutionData = await this.fetchData(airPollutionUrl);
 
             const Dados = {
-                "aqi": data.data.current.pollution.aqius,
-                "tp": data.data.current.weather.tp,
-                "ws": data.data.current.weather.ws,
-                "hu": data.data.current.weather.hu,
-                "ic": data.data.current.weather.ic
+                "aqi": (airPollutionData.list[0].main.aqi / 5) * 100,
+                "tp": weatherData.main.temp,
+                "ws": weatherData.wind.speed,
+                "hu": weatherData.main.humidity,
+                "ic": weatherData.weather[0].icon
             }
 
             return Dados;
@@ -214,26 +217,38 @@ class WeatherApp {
             console.error('Erro ao buscar qualidade do ar:', error); // Log de erro (mantido)
         }
     }
+
+    async fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.log(`Erro ao processar a resposta: ${error}`);
+            return null;
+        }
+    }
+
+    verificarPrincipalPoluente(components) {
+        const [poluentePrincipal, maiorValor] = Object.entries(components).reduce((prev, curr) => (curr[1] > prev[1] ? curr : prev));
+        return `${poluentePrincipal[0]}: ${maiorValor}`;
+    }
 }
 
-
-
-
-
-
-
+alert('O sistema pode demorar um pouco para confirmar a localização\nPor favor aguarde')
 
 const app = new WeatherApp();
 
-app.getLocalization();
-
-const dados = async () => {
+app.getLocalization().then(async () => {  // Aguarda as coordenadas antes de fazer as requisições
     const qualityData = await app.getQuality();
 
     if (qualityData) {
-        const render = new Render(qualityData)
+        const render = new Render(qualityData);
         render.renderPage();
     }
-};
+}).catch(error => {
+    console.error("Erro na obtenção da localização:", error);
+});
 
-dados();
