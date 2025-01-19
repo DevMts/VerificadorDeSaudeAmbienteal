@@ -5,6 +5,7 @@ class Render {
         this.ws = response.ws || 0;
         this.hu = response.hu || 0;
         this.ic = response.ic || 0;
+        this.name = response.name || '';
     }
 
     async renderPage() {
@@ -13,11 +14,13 @@ class Render {
             const tp = document.querySelector('.valor');
             const ws = document.querySelector('.vento');
             const hu = document.querySelector('.umidade');
+            const name = document.querySelector('.city');
 
-            aqi.innerText = `${this.aqi}%`
+            aqi.innerText = `${this.aqi}`
             tp.innerText = `${this.tp}C°`;
-            ws.innerText = `${this.ws}km/h`;
+            ws.innerText = `${this.ws}m/s`;
             hu.innerText = `${this.hu}%/`;
+            name.innerText = `${this.name}`;
 
             this.updateAQIBar();
         } catch (error) {
@@ -209,9 +212,10 @@ class WeatherApp {
                 "tp": weatherData.main.temp,
                 "ws": weatherData.wind.speed,
                 "hu": weatherData.main.humidity,
-                "ic": weatherData.weather[0].icon
+                "ic": weatherData.weather[0].icon,
+                "name": weatherData.name
             }
-
+            
             return Dados;
         } catch (error) {
             console.error('Erro ao buscar qualidade do ar:', error); // Log de erro (mantido)
@@ -249,6 +253,8 @@ app.getLocalization().then(async () => {  // Aguarda as coordenadas antes de faz
         render.renderPage();
     }
 }).catch(error => {
-    console.error("Erro na obtenção da localização:", error);
+    console.error("Erro na obtenção da localização:", error)
+    alert('Por favor ative a localização')
+    location.reload()
 });
 
