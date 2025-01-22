@@ -187,19 +187,37 @@ class WeatherApp {
 
     getLocalization() {
         return new Promise((resolve, reject) => {
-            try {
-                const success = (position) => {
-                    this.longitude = position.coords.longitude;
-                    this.latitude = position.coords.latitude;
-                    resolve();  // Resolve a Promise quando as coordenadas forem obtidas
-                };
-                navigator.geolocation.getCurrentPosition(success, reject); // Caso haja erro na geolocalização
-            } catch (error) {
-                reject("Erro ao obter localização"); // Log de erro (mantido)
-            }
+            const handleSuccess = (position) => {
+                // Coordenadas obtidas com sucesso
+                this.longitude = position.coords.longitude;
+                this.latitude = position.coords.latitude;
+                // Armazenar no localStorage
+                localStorage.setItem('coords', JSON.stringify({ longitude: this.longitude, latitude: this.latitude }));
+                resolve(); // Resolver a Promise
+            };
+    
+            const handleError = (error) => {
+                console.error("Erro ao obter geolocalização:", error);
+                const storedCoords = localStorage.getItem('coords');
+                if (storedCoords) {
+                    // Usar coordenadas armazenadas no localStorage
+                    const { latitude, longitude } = JSON.parse(storedCoords);
+                    this.latitude = latitude;
+                    this.longitude = longitude;
+                    resolve(); // Resolver com os dados do localStorage
+                } else {
+                    reject("Não foi possível obter a localização e não há dados salvos.");
+                    setInterval(() => {
+                        location.reload()
+                    }, 5000);
+                }
+            };
+    
+            // Obter a localização atual
+            navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
         });
     }
-
+    
     async getQuality() {
         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${this.latitude}&lon=${this.longitude}&appid=${WeatherApp.API_KEY}&units=metric`;
         const airPollutionUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${this.latitude}&lon=${this.longitude}&appid=${WeatherApp.API_KEY}`;
@@ -241,20 +259,25 @@ class WeatherApp {
     }
 }
 
-alert('O sistema pode demorar um pouco para confirmar a localização\nPor favor aguarde')
-
 const app = new WeatherApp();
 
-app.getLocalization().then(async () => {  // Aguarda as coordenadas antes de fazer as requisições
-    const qualityData = await app.getQuality();
+app.getLocalization()
+    .then(async () => {
+        // Aguarda as coordenadas antes de fazer as requisições
+        try {
+            const qualityData = await app.getQuality();
 
-    if (qualityData) {
-        const render = new Render(qualityData);
-        render.renderPage();
-    }
-}).catch(error => {
-    console.error("Erro na obtenção da localização:", error)
-    alert('Por favor ative a localização')
-    location.reload()
-});
+            if (qualityData) {
+                const render = new Render(qualityData);
+                render.renderPage();
+            } else {
+                console.error("Dados de qualidade não disponíveis.");
+            }
+        } catch (error) {
+            console.error("Erro ao obter os dados de qualidade:", error);
+        }
+    })
+    .catch(error => {
+        console.error("Erro na obtenção da localização:", error);
+    });
 
