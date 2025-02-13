@@ -16,5 +16,6 @@ webpack.config.js
 # Outros arquivos que você não quer incluir
 package-lock.json
 package.json
+.json
 assets/
 .vscode/
